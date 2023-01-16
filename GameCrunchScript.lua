@@ -30,14 +30,13 @@ auto_updater.run_auto_update({
 -- End of auto-updater
 
 
-util.toast("GameCrunchScript Version 5.5-S")  
+util.toast("GameCrunchScript Version 5.6-S")  
 util.require_natives(1640181023)
 menu.divider(menu.my_root(), "GameCrunch Script")
 
 local self = menu.list(menu.my_root(), "Self", {}, "Features relating to your character") -- Self root
 local online = menu.list(menu.my_root(), "Online", {}, "Features relating to GTA-online") -- Online root
 local credits = menu.list(menu.my_root(), "Credits", {}, "Just credits") -- Credits root
-
 
 -- Functions
 
@@ -187,7 +186,7 @@ end)
 menu.toggle_loop(detections, "Voice chat detection", {}, "Notifies you of people using voice-chat, not a modder detection.", function()
     for _, pid in ipairs(players.list(true, true, true)) do
         if NETWORK.NETWORK_IS_PLAYER_TALKING(pid) then 
-            util.toast(players.get_name(pid) " is using voice-chat")
+            util.toast(players.get_name(pid).. " is using voice-chat")
         end
     end
 end)
@@ -214,6 +213,9 @@ menu.action(credits, "Lance", {}, "I looked at LanceScript to figure out how to 
 end)
 
 menu.action(credits, "Wiri", {}, "Looked at how WiriScript applied vehicle boost", function()
+end)
+
+menu.action(credits, "Hexabori", {}, "Using his auto-updater", function()
 end)
 -- =================================================
 
@@ -404,6 +406,17 @@ players.on_join(function(pid)
         util.yield(1500)
     end)
 
+menu.toggle_loop(trolling, "Car bomb", {}, "Explode whatever vehicle the target enters", function()
+    local playerPed =       PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+    local playerVehicle =   PED.GET_VEHICLE_PED_IS_IN(playerPed, false)
+    if PED.IS_PED_IN_VEHICLE(playerPed, playerVehicle, false) then 
+        if ENTITY.IS_ENTITY_DEAD(playerPed, false) == false then
+            local coords = players.get_position(pid)
+            FIRE.ADD_EXPLOSION(coords.x, coords.y, coords.z, 0, 100, true, false, 1, false)
+          end
+    end
+end)
+
     menu.toggle_loop(trolling, "Ragdoll loop", {}, "Keeps target ragdolled", function()
         local coords = players.get_position(pid)
         coords.z = coords['z'] - 2.0
@@ -469,6 +482,8 @@ players.on_join(function(pid)
         ENTITY.APPLY_FORCE_TO_ENTITY(car, 1, 0.0, 0.0, -65, 0.0, 0.0, 0.0, 1, false, true, true, true, true)
     end)
 
+
+
     -- ================================================================================
     -- SOUNDS
 
@@ -522,3 +537,4 @@ players.on_join(function(pid)
 end)
 players.dispatch_on_join()
 util.keep_running()
+
